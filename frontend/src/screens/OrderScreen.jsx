@@ -39,26 +39,28 @@ const OrderScreen = () => {
   } = useGetPaypalClientIdQuery();
 
   useEffect(() => {
-    if (!errorPayPal && !loadingPayPal && paypal.clientId) {
+    if (!errorPayPal && !loadingPayPal && paypal?.clientId) {
+      console.log('PayPal Client ID:', paypal.clientId);
       const loadPaypalScript = async () => {
         paypalDispatch({
           type: 'resetOptions',
           value: {
             'client-id': paypal.clientId,
-            currency: 'USD',
+            currency: 'AUD',
           },
         });
         paypalDispatch({ type: 'setLoadingStatus', value: 'pending' });
       };
-      if (order && !order.isPaid) {
-        if (!window.paypal) {
-          loadPaypalScript();
-        }
+      if (order && !order.isPaid && !window.paypal) {
+        loadPaypalScript();
       }
+    } else if (errorPayPal) {
+      console.log('Unable to fetch PayPal Client ID. Error:', errorPayPal);
     }
   }, [errorPayPal, loadingPayPal, order, paypal, paypalDispatch]);
 
   function onApprove(data, actions) {
+    console.log('onApprove called with data:', data);
     return actions.order.capture().then(async function (details) {
       try {
         await payOrder({ orderId, details });
@@ -70,19 +72,13 @@ const OrderScreen = () => {
     });
   }
 
-  // TESTING ONLY! REMOVE BEFORE PRODUCTION
-  // async function onApproveTest() {
-  //   await payOrder({ orderId, details: { payer: {} } });
-  //   refetch();
-
-  //   toast.success('Order is paid');
-  // }
-
   function onError(err) {
+    console.log('onError called with error:', err);
     toast.error(err.message);
   }
 
   function createOrder(data, actions) {
+    console.log('createOrder called with data:', data);
     return actions.order
       .create({
         purchase_units: [
@@ -100,6 +96,8 @@ const OrderScreen = () => {
     await deliverOrder(orderId);
     refetch();
   };
+
+  console.log('Order data:', order);
 
   return isLoading ? (
     <Loader />

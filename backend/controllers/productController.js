@@ -62,7 +62,37 @@ const createProduct = asyncHandler(async (req, res) => {
   const createdProduct = await product.save();
   res.status(201).json(createdProduct);
 });
+const createSubcategory = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
 
+  if (product) {
+    const { name, colorSet } = req.body;
+
+    const subcategory = {
+      name,
+      colorSet,
+    };
+
+    product.subcategories.push(subcategory);
+
+    await product.save();
+
+    res.status(201).json({ message: 'Subcategory added' });
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
+const getSubcategories = asyncHandler(async (req, res) => {
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    res.json(product.subcategories);
+  } else {
+    res.status(404);
+    throw new Error('Product not found');
+  }
+});
 // @desc    Update a product
 // @route   PUT /api/products/:id
 // @access  Private/Admin
@@ -162,4 +192,6 @@ export {
   deleteProduct,
   createProductReview,
   getTopProducts,
+  createSubcategory,
+  getSubcategories,
 };

@@ -1,12 +1,12 @@
 import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
-import { FaShoppingCart, FaUser } from 'react-icons/fa';
+import { FaPhone, FaUserCircle, FaHeart, FaShoppingCart } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
 import SearchBox from './SearchBox';
-import logo from '../assets/logo.png';
+import logo from '../assets/logo1.png';
 
 const Header = () => {
   const { cartItems } = useSelector((state) => state.cart);
@@ -29,61 +29,89 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar bg='primary' variant='dark' expand='lg' collapseOnSelect>
+      <Navbar bg='light' variant='light' expand='lg' collapseOnSelect>
         <Container>
           <LinkContainer to='/'>
             <Navbar.Brand>
-              <img src={logo} alt='ProShop' />
-              ProShop
+              <img src={logo} alt='ProShop' height="40px"/>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ms-auto'>
+            <Nav className='me-auto'>
+              {/* Search bar */}
               <SearchBox />
-              <LinkContainer to='/cart'>
+            </Nav>
+            <Nav>
+              <Nav.Link className="call-now">
+                <FaPhone /> <span>Call us now 1300 283 460</span>
+              </Nav.Link>
+              <LinkContainer to='/profile'>
                 <Nav.Link>
-                  <FaShoppingCart /> Cart
-                  {cartItems.length > 0 && (
-                    <Badge pill bg='success' style={{ marginLeft: '5px' }}>
-                      {cartItems.reduce((a, c) => a + c.qty, 0)}
-                    </Badge>
-                  )}
+                  <div>
+                    <FaUserCircle size={28}/> {/* Adjust size as needed */}
+                  </div>
+                </Nav.Link> 
+              </LinkContainer>
+              <LinkContainer to='/wishlist'>
+                <Nav.Link>
+                  <div>
+                    <FaHeart size={28}/> {/* Adjust size as needed */}
+                  </div>
                 </Nav.Link>
               </LinkContainer>
-              {userInfo ? (
-                <>
-                  <NavDropdown title={userInfo.name} id='username'>
-                    <LinkContainer to='/profile'>
-                      <NavDropdown.Item>Profile</NavDropdown.Item>
-                    </LinkContainer>
-                    <NavDropdown.Item onClick={logoutHandler}>
-                      Logout
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </>
-              ) : (
-                <LinkContainer to='/login'>
-                  <Nav.Link>
-                    <FaUser /> Sign In
-                  </Nav.Link>
-                </LinkContainer>
-              )}
-
-              {/* Admin Links */}
-              {userInfo && userInfo.isAdmin && (
-                <NavDropdown title='Admin' id='adminmenu'>
-                  <LinkContainer to='/admin/productlist'>
-                    <NavDropdown.Item>Products</NavDropdown.Item>
+              <LinkContainer to='/cart'>
+                <Nav.Link>
+                  <div>
+                    <FaShoppingCart size={28}/> {/* Adjust size as needed */}
+                    {cartItems.length > 0 && (
+                      <Badge pill bg='success' style={{ marginLeft: '5px' }}>
+                        {cartItems.reduce((a, c) => a + c.qty, 0)}
+                      </Badge>
+                    )}
+                  </div>
+                </Nav.Link>
+              </LinkContainer>
+              {userInfo && (
+                <NavDropdown title={userInfo.name} id='username'>
+                  <LinkContainer to='/profile'>
+                    <NavDropdown.Item>Profile</NavDropdown.Item>
                   </LinkContainer>
-                  <LinkContainer to='/admin/orderlist'>
-                    <NavDropdown.Item>Orders</NavDropdown.Item>
-                  </LinkContainer>
-                  <LinkContainer to='/admin/userlist'>
-                    <NavDropdown.Item>Users</NavDropdown.Item>
-                  </LinkContainer>
+                  <NavDropdown.Item onClick={logoutHandler}>
+                    Logout
+                  </NavDropdown.Item>
                 </NavDropdown>
               )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
+      </Navbar>
+      <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
+        <Container>
+          <Navbar.Toggle aria-controls='basic-navbar-nav' />
+          <Navbar.Collapse id='basic-navbar-nav'>
+            <Nav className='me-auto'>
+              <LinkContainer to='/'>
+                <Nav.Link>HOME</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/about'>
+                <Nav.Link>ABOUT US</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/madeira'>
+                <Nav.Link>MADEIRA</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/consumables'>
+                <Nav.Link>CONSUMABLES</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/information'>
+                <Nav.Link>INFORMATION</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/digitising'>
+                <Nav.Link>DIGITISING</Nav.Link>
+              </LinkContainer>
+              <LinkContainer to='/contact'>
+                <Nav.Link>CONTACT US</Nav.Link>
+              </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Container>

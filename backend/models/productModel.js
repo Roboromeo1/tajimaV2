@@ -15,6 +15,19 @@ const reviewSchema = mongoose.Schema(
     timestamps: true,
   }
 );
+const subcategorySchema = mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    colorSet: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: 'ColorSet',
+    },
+  },
+  {
+    timestamps: true,
+  }
+);
 
 const productSchema = mongoose.Schema(
   {
@@ -64,6 +77,7 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    subcategories: [subcategorySchema],
   },
   {
     timestamps: true,
