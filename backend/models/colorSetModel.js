@@ -10,7 +10,7 @@ const colorSchema = new mongoose.Schema({
 });
 
 const colorSetSchema = mongoose.Schema({
-  name: { type: String, required: true, unique: true },
+  name: { type: String, required: false, unique: true },
   colors: [colorSchema], // use the colorSchema defined above
 });
 

@@ -27,18 +27,17 @@ const getColorSetById = asyncHandler(async (req, res) => {
 // @route   POST /api/colorsets
 // @access  Private/Admin
 const createColorSet = asyncHandler(async (req, res) => {
-    const { name, colors } = req.body;
-  
-    const colorSet = new ColorSet({
-      name,
-      colors,
-      user: req.user._id,
-    });
-  
-    const createdColorSet = await colorSet.save();
-    res.status(201).json(createdColorSet);
+  const { name, colors } = req.body;
+
+  const colorSet = new ColorSet({
+    name,
+    colors,
   });
-  
+
+  const createdColorSet = await colorSet.save();
+  res.status(201).json(createdColorSet);
+});
+
 // @desc    Update a color set
 // @route   PUT /api/colorsets/:id
 // @access  Private/Admin
@@ -51,8 +50,13 @@ const updateColorSet = asyncHandler(async (req, res) => {
     colorSet.name = name;
     colorSet.colors = colors;
 
-    const updatedColorSet = await colorSet.save();
-    res.json(updatedColorSet);
+    try {
+      const updatedColorSet = await colorSet.save();
+      res.json(updatedColorSet);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: 'Error updating color set' });
+    }
   } else {
     res.status(404);
     throw new Error('Color Set not found');
@@ -63,16 +67,22 @@ const updateColorSet = asyncHandler(async (req, res) => {
 // @route   DELETE /api/colorsets/:id
 // @access  Private/Admin
 const deleteColorSet = asyncHandler(async (req, res) => {
-  const colorSet = await ColorSet.findById(req.params.id);
+  try {
+    const colorSet = await ColorSet.findById(req.params.id);
 
-  if (colorSet) {
-    await colorSet.remove();
-    res.json({ message: 'Color Set removed' });
-  } else {
-    res.status(404);
-    throw new Error('Color Set not found');
+    if (colorSet) {
+      await ColorSet.deleteOne({ _id: colorSet._id });
+      res.json({ message: 'Color Set removed' });
+    } else {
+      res.status(404);
+      throw new Error('Color Set not found');
+    }
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: 'Internal Server Error' });
   }
 });
+
 
 export {
   getColorSets,
